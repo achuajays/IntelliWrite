@@ -6,6 +6,7 @@ current_open_file = None
 current_directory = os.getcwd()
 autosave_interval = 5000  # 5 seconds
 
+
 def add_file_menu(menu, root, text_widget, file_listbox=None):
     global current_open_file, current_directory
 
@@ -21,7 +22,8 @@ def add_file_menu(menu, root, text_widget, file_listbox=None):
                 if os.path.isfile(full_path):
                     listbox.insert("end", f)
         except Exception as e:
-            messagebox.showerror("Error", f"Cannot list files in {current_directory}:\n{e}")
+            messagebox.showerror(
+                "Error", f"Cannot list files in {current_directory}:\n{e}")
 
     def open_folder():
         global current_directory
@@ -96,14 +98,15 @@ def add_file_menu(menu, root, text_widget, file_listbox=None):
 
     def save_as():
         global current_open_file
-        filename = filedialog.asksaveasfilename(defaultextension=".txt", initialdir=current_directory)
+        filename = filedialog.asksaveasfilename(
+            defaultextension=".txt", initialdir=current_directory)
         if filename:
             try:
                 content = text_widget.get(1.0, "end-1c")
                 with open(filename, "w", encoding="utf-8") as f:
                     f.write(content)
                 current_open_file = filename
-                root.title(f"{os.path.basename(filename)} - WISDOM NOTEPAD")
+                root.title(f"{os.path.basename(filename)} -  NOTEPAD")
                 if file_listbox:
                     refresh_file_list(file_listbox)
             except Exception as e:

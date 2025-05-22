@@ -6,6 +6,7 @@ from editor import create_editor
 from file_ops import add_file_menu
 from edit_ops import add_edit_menu
 from ai_generator import add_ai_menu
+from terminal_ops import add_terminal_menu
 
 import tkinter as tk
 from tkinter import ttk
@@ -43,11 +44,13 @@ def create_file_listbox(root, text_widget):
             if os.path.isfile(f):
                 listbox.insert("end", f)
 
-    refresh_button = tk.Button(frame, text="Refresh", command=refresh_file_list)
+    refresh_button = tk.Button(
+        frame, text="Refresh", command=refresh_file_list)
     refresh_button.pack(pady=5)
 
     refresh_file_list()
     return frame, listbox
+
 
 def create_folder_tree(root, text_widget):
     frame = tk.Frame(root)
@@ -59,22 +62,22 @@ def create_folder_tree(root, text_widget):
     tree = ttk.Treeview(frame)
     tree.pack(fill="y", expand=True)
 
-    # Add root node
-    cwd = os.getcwd()
-    root_node = tree.insert("", "end", text=cwd, open=True, values=[cwd])
-    insert_node(root_node, cwd)
-    
     def insert_node(parent, path):
         try:
             for item in os.listdir(path):
                 abs_path = os.path.join(path, item)
                 isdir = os.path.isdir(abs_path)
-                node = tree.insert(parent, "end", text=item, open=False, values=[abs_path])
+                node = tree.insert(parent, "end", text=item,
+                                   open=False, values=[abs_path])
                 if isdir:
-                    # Insert dummy child to make node expandable
                     tree.insert(node, "end", text="Loading...")
         except PermissionError:
             pass
+
+    # Add root node
+    cwd = os.getcwd()
+    root_node = tree.insert("", "end", text=cwd, open=True, values=[cwd])
+    insert_node(root_node, cwd)
 
     def open_node(event):
         node = tree.focus()
@@ -108,28 +111,32 @@ def create_folder_tree(root, text_widget):
 
     return frame
 
+
 def main():
     root = tk.Tk()
     root.title("WISDOM NOTEPAD")
     root.geometry("1200x600")
 
-    # Left: File list in current directory
+    # Create text widget and file list
     text_widget = create_editor(root)
     file_frame, file_listbox = create_file_listbox(root, text_widget)
 
     file_frame.pack(side="left", fill="y")
     text_widget.pack(side="left", fill="both", expand=True)
 
-    # Right: Folder tree browser
+    # Create folder tree on right
     folder_frame = create_folder_tree(root, text_widget)
     folder_frame.pack(side="right", fill="y")
 
+    # 🔧 Define menubar before using it
     menubar = tk.Menu(root)
     root.config(menu=menubar)
 
+    # ✅ These must come after menubar is created
     add_file_menu(menubar, root, text_widget, file_listbox)
     add_edit_menu(menubar, text_widget)
     add_ai_menu(menubar, text_widget)
+    add_terminal_menu(menubar, root)  # This line now works correctly
 
     root.mainloop()
 
