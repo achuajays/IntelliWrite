@@ -4,6 +4,24 @@ from tkinter import colorchooser
 # Global font size tracker
 current_font_size = 12  # Default font size
 
+def bind_editor_shortcuts(root, text_widget, save_callback):
+    # Undo / Redo
+    text_widget.bind('<Control-z>', lambda e: text_widget.event_generate('<<Undo>>'))
+    text_widget.bind('<Control-y>', lambda e: text_widget.event_generate('<<Redo>>'))
+
+    # Cut / Copy / Paste
+    text_widget.bind('<Control-x>', lambda e: text_widget.event_generate('<<Cut>>'))
+    text_widget.bind('<Control-c>', lambda e: text_widget.event_generate('<<Copy>>'))
+    text_widget.bind('<Control-v>', lambda e: text_widget.event_generate('<<Paste>>'))
+
+    # Select All
+    def select_all(event=None):
+        text_widget.tag_add('sel', '1.0', 'end')
+        return 'break'
+    text_widget.bind('<Control-a>', select_all)
+
+    # Save (calls your save callback)
+    text_widget.bind('<Control-s>', lambda e: (save_callback(), 'break'))
 
 def add_edit_menu(menu, text_widget):
     edit_menu = tk.Menu(menu, tearoff=0)

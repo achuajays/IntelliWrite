@@ -138,6 +138,7 @@ def main():
     add_ai_menu(menubar, text_widget)
     add_terminal_menu(menubar, root)  # This line now works correctly
 
+
     root.mainloop()
 
 
